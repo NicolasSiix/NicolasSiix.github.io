@@ -54,8 +54,12 @@ const AUTH = (() => {
       document.getElementById('login-user').value = '';
       err.classList.remove('show');
       updateAdminUI();
-      // Recarrega membros para mostrar pendentes e controles de admin
       if (typeof MEMBERS !== 'undefined') MEMBERS.render();
+      if (typeof ABOUT   !== 'undefined') ABOUT.render();
+      if (typeof PHOTOS  !== 'undefined') {
+        const photosPage = document.getElementById('page-photos');
+        if (photosPage && photosPage.classList.contains('active')) PHOTOS.render();
+      }
     } else {
       err.classList.add('show');
       document.getElementById('login-pass').value = '';
@@ -68,21 +72,25 @@ const AUTH = (() => {
     localStorage.removeItem(STORAGE_KEY);
     updateAdminUI();
     if (typeof MEMBERS !== 'undefined') MEMBERS.render();
+    if (typeof ABOUT   !== 'undefined') ABOUT.render();
   }
 
   function updateAdminUI() {
-    const banners   = document.querySelectorAll('.admin-banner');
-    const btnLogin  = document.getElementById('btn-admin-login');
-    const btnLogout = document.getElementById('btn-admin-logout');
+    const banners    = document.querySelectorAll('.admin-banner');
+    const adminOnly  = document.querySelectorAll('.admin-only');
+    const btnLogin   = document.getElementById('btn-admin-login');
+    const btnLogout  = document.getElementById('btn-admin-logout');
     const adminLabel = document.getElementById('admin-label');
 
     if (isAdminLoggedIn) {
       banners.forEach(b => b.style.display = 'flex');
+      adminOnly.forEach(b => b.style.display = 'inline-block');
       btnLogin.style.display   = 'none';
       btnLogout.style.display  = 'inline-block';
       if (adminLabel) adminLabel.style.display = 'inline';
     } else {
       banners.forEach(b => b.style.display = 'none');
+      adminOnly.forEach(b => b.style.display = 'none');
       btnLogin.style.display   = 'inline-block';
       btnLogout.style.display  = 'none';
       if (adminLabel) adminLabel.style.display = 'none';

@@ -135,7 +135,85 @@ const MEMBERS = (() => {
 
     document.getElementById('profile-name').textContent = m.name;
     document.getElementById('profile-role').textContent = m.role;
+
+    // Botão de upload de foto para o próprio operador
+    const uploadWrap = document.getElementById('profile-upload-wrap');
+    if (uploadWrap) {
+      uploadWrap.innerHTML = `
+        <div style="margin-top:16px;">
+          <label style="font-size:12px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;">
+            É você? Adicione sua foto:
+          </label>
+          <input type="file" id="self-photo-file" accept="image/*"
+            style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;width:100%;font-size:12px;" />
+          <div id="self-photo-preview" style="margin-top:8px;"></div>
+          <button onclick="MEMBERS.uploadSelfPhoto(${m.id})" class="btn-gold" style="width:100%;margin-top:10px;">
+            Salvar Foto
+          </button>
+        </div>`;
+
+      // Preview
+      setTimeout(() => {
+        const inp = document.getElementById('self-photo-file');
+        if (inp) inp.addEventListener('change', function() {
+          const file = this.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = e => {
+            document.getElementById('self-photo-preview').innerHTML =
+              `<img src="${e.target.result}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />`;
+          };
+          reader.readAsDataURL(file);
+        });
+      }, 100);
+    }
+
     document.getElementById('modal-member-profile').classList.add('open');
+  }
+
+  async function uploadSelfPhoto(memberId) {
+    const fileInput = document.getElementById('self-photo-file');
+    const file = fileInput ? fileInput.files[0] : null;
+    if (!file) { alert('Selecione uma foto primeiro.'); return; }
+
+    const btn = document.querySelector('#profile-upload-wrap .btn-gold');
+    if (btn) { btn.textContent = 'Enviando...'; btn.disabled = true; }
+
+    try {
+      const ext      = file.name.split('.').pop();
+      const fileName = `member_${memberId}_${Date.now()}.${ext}`;
+
+      const uploadRes = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/photos/${fileName}`,
+        {
+          method: 'POST',
+          headers: {
+            'apikey':        SUPABASE_ANON,
+            'Authorization': 'Bearer ' + SUPABASE_ANON,
+            'Content-Type':  file.type,
+            'x-upsert':      'true'
+          },
+          body: file
+        }
+      );
+
+      if (!uploadRes.ok) throw new Error(await uploadRes.text());
+
+      const photo_url = `${SUPABASE_URL}/storage/v1/object/public/photos/${fileName}`;
+      await DB.patch('members', memberId, { photo_url });
+
+      const m = members.find(x => x.id === memberId);
+      if (m) m.photo_url = photo_url;
+
+      closeModal('modal-member-profile');
+      _renderAll();
+      showToast('Foto atualizada! 💀');
+
+    } catch(e) {
+      alert('Erro ao enviar foto.');
+      console.error(e);
+      if (btn) { btn.textContent = 'Salvar Foto'; btn.disabled = false; }
+    }
   }
 
   /* ---- CADASTRO ---- */
