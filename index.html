@@ -12,7 +12,7 @@
 <body>
 <div class="wrapper">
 
-  <!-- ==================== HEADER ==================== -->
+  <!-- HEADER -->
   <header>
     <div class="header-inner">
       <img src="assets/logo.png" alt="Agulhas Negras Logo" class="logo-img" />
@@ -28,42 +28,41 @@
     </div>
   </header>
 
-  <!-- ==================== NAVEGAÇÃO ==================== -->
+  <!-- NAV -->
   <nav>
     <div class="nav-inner">
       <button class="nav-btn active" data-page="calendar">&#128197; Calendário</button>
       <button class="nav-btn"        data-page="games">&#127918; Missões</button>
       <button class="nav-btn"        data-page="members">&#128100; Equipe</button>
+      <button class="nav-btn"        data-page="photos">&#128247; Fotos</button>
+      <button class="nav-btn"        data-page="about">&#9876; O Time</button>
     </div>
   </nav>
 
-  <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
   <main>
 
-    <!-- ===== CALENDÁRIO ===== -->
+    <!-- CALENDÁRIO -->
     <div class="page active" id="page-calendar">
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-num" id="stat-games">5</div><div class="stat-label">Missões em 2025</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-members">8</div><div class="stat-label">Integrantes</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-games">0</div><div class="stat-label">Missões</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-members">0</div><div class="stat-label">Integrantes</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-next">—</div><div class="stat-label">Dias p/ próx. jogo</div></div>
         <div class="stat-card"><div class="stat-num">ITU</div><div class="stat-label">Base de operações</div></div>
       </div>
-
       <div class="admin-banner" style="display:none;">
         <span>&#9650; MODO ADMIN — você pode adicionar e editar missões</span>
         <button class="btn-gold" id="btn-new-game">+ Nova Missão</button>
       </div>
-
       <div class="section-title">Calendário Tático</div>
       <div class="month-nav">
         <button class="month-btn" id="btn-prev-month">&#8592;</button>
-        <div class="month-title" id="month-title">JUNHO 2025</div>
+        <div class="month-title" id="month-title"></div>
         <button class="month-btn" id="btn-next-month">&#8594;</button>
       </div>
       <div class="calendar-grid" id="calendar-grid"></div>
     </div>
 
-    <!-- ===== MISSÕES ===== -->
+    <!-- MISSÕES -->
     <div class="page" id="page-games">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
         <div class="section-title" style="margin-bottom:0;">Missões</div>
@@ -75,30 +74,59 @@
       <div class="games-list" id="games-list"></div>
     </div>
 
-    <!-- ===== EQUIPE ===== -->
+    <!-- EQUIPE -->
     <div class="page" id="page-members">
-
-      <!-- Banner de pendentes (só admin vê) -->
       <div id="pending-banner" class="pending-banner" style="display:none;">
         <div class="pending-banner-title">&#9888; Solicitações aguardando aprovação</div>
         <div id="pending-list"></div>
       </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="section-title" style="margin-bottom:0;">Equipe — Agulhas Negras</div>
         <button class="btn-gold" id="btn-join">+ Quero entrar no time</button>
       </div>
-
       <div class="members-grid" id="members-grid"></div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="page" id="page-photos">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="section-title" style="margin-bottom:0;">Galeria de Fotos</div>
+        <button class="btn-gold admin-only" id="btn-add-photo" style="display:none;">+ Adicionar Foto</button>
+      </div>
+      <div class="photos-grid" id="photos-grid"></div>
+    </div>
+
+    <!-- O TIME (Quem Somos + Regras) -->
+    <div class="page" id="page-about">
+      <div class="about-grid">
+
+        <!-- Quem Somos -->
+        <div class="about-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div class="section-title" style="margin-bottom:0;">Quem Somos</div>
+            <button class="btn-outline admin-only" id="btn-edit-quem-somos" style="display:none;">✎ Editar</button>
+          </div>
+          <div class="about-content" id="quem-somos-content"></div>
+        </div>
+
+        <!-- Regras -->
+        <div class="about-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div class="section-title" style="margin-bottom:0;">Regras do Time</div>
+            <button class="btn-outline admin-only" id="btn-edit-regras" style="display:none;">✎ Editar</button>
+          </div>
+          <div class="about-content" id="regras-content"></div>
+        </div>
+
+      </div>
     </div>
 
   </main>
 </div>
 
-<!-- Toast de feedback -->
 <div class="toast" id="toast"></div>
 
-<!-- ==================== MODAL: DETALHE DO JOGO ==================== -->
+<!-- MODAL: DETALHE DO JOGO -->
 <div class="modal-overlay" id="modal-detail">
   <div class="modal">
     <button class="modal-close" id="modal-close-detail">&#215;</button>
@@ -120,7 +148,7 @@
   </div>
 </div>
 
-<!-- ==================== MODAL: ADICIONAR JOGO ==================== -->
+<!-- MODAL: ADICIONAR/EDITAR JOGO -->
 <div class="modal-overlay" id="modal-add">
   <div class="modal">
     <button class="modal-close" id="modal-close-add">&#215;</button>
@@ -138,15 +166,11 @@
     <div class="form-group">
       <label>Modalidade</label>
       <select id="f-mode">
-        <option>Operação</option>
-        <option>Domínio de área</option>
-        <option>VIP / Escolta</option>
-        <option>Captura de bandeira</option>
-        <option>Eliminação</option>
-        <option>Missão especial</option>
+        <option>Operação</option><option>Domínio de área</option><option>VIP / Escolta</option>
+        <option>Captura de bandeira</option><option>Eliminação</option><option>Missão especial</option>
       </select>
     </div>
-    <div class="form-group"><label>Descrição / Briefing</label><textarea id="f-desc" placeholder="Detalhes da operação, regras, o que levar..."></textarea></div>
+    <div class="form-group"><label>Descrição / Briefing</label><textarea id="f-desc" placeholder="Detalhes da operação..."></textarea></div>
     <div class="form-actions">
       <button class="btn-outline" id="btn-cancel-add">Cancelar</button>
       <button class="btn-gold"    id="btn-save-game">Adicionar Missão</button>
@@ -154,7 +178,7 @@
   </div>
 </div>
 
-<!-- ==================== MODAL: SOLICITAR ENTRADA ==================== -->
+<!-- MODAL: SOLICITAR ENTRADA -->
 <div class="modal-overlay" id="modal-join">
   <div class="modal">
     <button class="modal-close" id="modal-close-join">&#215;</button>
@@ -164,12 +188,8 @@
     <div class="form-group">
       <label>Função / Classe</label>
       <select id="join-role">
-        <option>Operador</option>
-        <option>Franco-atirador</option>
-        <option>Apoio</option>
-        <option>Médico de campo</option>
-        <option>Reconhecimento</option>
-        <option>Assalto</option>
+        <option>Operador</option><option>Franco-atirador</option><option>Apoio</option>
+        <option>Médico de campo</option><option>Reconhecimento</option><option>Assalto</option>
       </select>
     </div>
     <div class="form-actions">
@@ -179,16 +199,18 @@
   </div>
 </div>
 
-<!-- ==================== MODAL: EDITAR MEMBRO (admin) ==================== -->
+<!-- MODAL: EDITAR MEMBRO -->
 <div class="modal-overlay" id="modal-edit-member">
   <div class="modal">
     <button class="modal-close" id="modal-close-edit-member">&#215;</button>
     <h2>Editar Membro</h2>
     <div class="modal-sub">Altere os dados do operador</div>
     <div class="form-group"><label>Nome Completo</label><input type="text" id="edit-member-name" /></div>
+    <div class="form-group"><label>Função / Classe</label><input type="text" id="edit-member-role" /></div>
     <div class="form-group">
-      <label>Função / Classe</label>
-      <input type="text" id="edit-member-role" placeholder="Ex: Operador, Franco-atirador..." />
+      <label>Foto de Perfil</label>
+      <input type="file" id="edit-member-photo" accept="image/*" style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px;width:100%;" />
+      <div id="edit-member-photo-preview" style="margin-top:8px;"></div>
     </div>
     <div class="form-actions">
       <button class="btn-outline" id="btn-cancel-edit-member">Cancelar</button>
@@ -197,25 +219,80 @@
   </div>
 </div>
 
-<!-- ==================== TELA DE LOGIN ADMIN ==================== -->
+<!-- MODAL: PERFIL DO MEMBRO -->
+<div class="modal-overlay" id="modal-member-profile">
+  <div class="modal" style="text-align:center;max-width:400px;">
+    <button class="modal-close" id="modal-close-member-profile">&#215;</button>
+    <div id="profile-avatar-wrap" style="margin:0 auto 16px;"></div>
+    <h2 id="profile-name">-</h2>
+    <div id="profile-role" style="font-size:13px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-top:4px;"></div>
+  </div>
+</div>
+
+<!-- MODAL: ADICIONAR FOTO -->
+<div class="modal-overlay" id="modal-add-photo">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-add-photo">&#215;</button>
+    <h2>Adicionar Foto</h2>
+    <div class="modal-sub">Selecione uma imagem para a galeria</div>
+    <div class="form-group">
+      <label>Imagem</label>
+      <input type="file" id="photo-file" accept="image/*" style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px;width:100%;" />
+    </div>
+    <div class="form-group"><label>Legenda (opcional)</label><input type="text" id="photo-caption" placeholder="Ex: Operação Florestal 2025" /></div>
+    <div id="photo-preview" style="margin-top:8px;"></div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-add-photo">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-photo">Enviar Foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR CONTEÚDO (Quem Somos / Regras) -->
+<div class="modal-overlay" id="modal-edit-content">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-edit-content">&#215;</button>
+    <h2 id="edit-content-title">Editar</h2>
+    <div class="modal-sub">Use Enter para quebrar linhas</div>
+    <div class="form-group"><textarea id="edit-content-text" style="min-height:200px;"></textarea></div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-edit-content">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-content">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: VISUALIZAR FOTO -->
+<div class="modal-overlay" id="modal-view-photo">
+  <div class="modal" style="max-width:700px;text-align:center;background:transparent;border:none;">
+    <button class="modal-close" id="modal-close-view-photo" style="color:#fff;">&#215;</button>
+    <img id="view-photo-img" src="" style="max-width:100%;max-height:70vh;border-radius:6px;display:block;margin:0 auto;" />
+    <div id="view-photo-caption" style="color:#ccc;margin-top:10px;font-size:14px;"></div>
+    <button id="btn-delete-photo" class="btn-danger" style="display:none;margin-top:12px;">🗑 Excluir Foto</button>
+  </div>
+</div>
+
+<!-- LOGIN ADMIN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
     <img src="assets/logo.png" alt="Logo" class="login-logo" />
     <h2>Acesso Admin</h2>
     <p>AGULHAS NEGRAS — SQUAD ITU</p>
-    <div class="login-error" id="login-error">Usuário ou senha incorretos. Tente novamente.</div>
+    <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
     <div class="form-group" style="text-align:left;"><label>Usuário</label><input type="text" id="login-user" placeholder="admin" autocomplete="username" /></div>
     <div class="form-group" style="text-align:left;"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" /></div>
     <button class="btn-gold" id="btn-do-login" style="width:100%;margin-top:8px;">ENTRAR</button>
   </div>
 </div>
 
-<!-- ==================== SCRIPTS ==================== -->
+<!-- SCRIPTS -->
 <script src="js/data.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/calendar.js"></script>
 <script src="js/games.js"></script>
 <script src="js/members.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/about.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

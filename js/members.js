@@ -1,63 +1,70 @@
 /* ============================================================
    AGULHAS NEGRAS — SQUAD ITU
-   members.js — Equipe com Supabase
+   members.js — Equipe com foto de perfil, Supabase Storage
    ============================================================ */
 
 const MEMBERS = (() => {
 
   let editingMemberId = null;
 
-  function init() {
-    document.getElementById('btn-join').addEventListener('click', openJoinForm);
-    document.getElementById('modal-close-join').addEventListener('click', () => closeModal('modal-join'));
-    document.getElementById('modal-join').addEventListener('click', function(e) {
-      if (e.target === this) closeModal('modal-join');
-    });
-    document.getElementById('btn-cancel-join').addEventListener('click', () => closeModal('modal-join'));
-    document.getElementById('btn-save-join').addEventListener('click', submitJoin);
-
-    document.getElementById('modal-close-edit-member').addEventListener('click', () => closeModal('modal-edit-member'));
-    document.getElementById('modal-edit-member').addEventListener('click', function(e) {
-      if (e.target === this) closeModal('modal-edit-member');
-    });
-    document.getElementById('btn-cancel-edit-member').addEventListener('click', () => closeModal('modal-edit-member'));
-    document.getElementById('btn-save-edit-member').addEventListener('click', saveEditMember);
+  function safeOn(id, event, fn) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(event, fn);
   }
 
-  /* ---- RENDER COM FETCH DO BANCO ---- */
+  function init() {
+    safeOn('btn-join',              'click', openJoinForm);
+    safeOn('modal-close-join',      'click', () => closeModal('modal-join'));
+    safeOn('btn-cancel-join',       'click', () => closeModal('modal-join'));
+    safeOn('btn-save-join',         'click', submitJoin);
+    safeOn('modal-close-edit-member','click',() => closeModal('modal-edit-member'));
+    safeOn('btn-cancel-edit-member','click', () => closeModal('modal-edit-member'));
+    safeOn('btn-save-edit-member',  'click', saveEditMember);
+    safeOn('modal-close-member-profile','click', () => closeModal('modal-member-profile'));
+
+    safeOn('modal-join',         'click', function(e) { if (e.target === this) closeModal('modal-join'); });
+    safeOn('modal-edit-member',  'click', function(e) { if (e.target === this) closeModal('modal-edit-member'); });
+    safeOn('modal-member-profile','click',function(e) { if (e.target === this) closeModal('modal-member-profile'); });
+
+    // Preview da foto ao editar membro
+    safeOn('edit-member-photo', 'change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('edit-member-photo-preview').innerHTML =
+          `<img src="${e.target.result}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />`;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* ---- RENDER PRINCIPAL ---- */
   async function render() {
     document.getElementById('members-grid').innerHTML =
       '<div class="empty-state">Carregando operadores...</div>';
     try {
       members = await DB.get('members', 'order=created_at.asc');
-    } catch(e) {
-      console.error('Erro ao carregar membros:', e);
-    }
+    } catch(e) { console.error(e); }
     _renderAll();
   }
 
-  /* ---- RENDER COM DADOS JÁ EM MEMÓRIA (chamado pelo app.js no boot) ---- */
-  function renderFromMemory() {
-    _renderAll();
-  }
+  function renderFromMemory() { _renderAll(); }
 
   function _renderAll() {
     renderPendingBanner();
     renderActiveMembers();
-    const activeCount = members.filter(m => m.status === 'active').length;
-    document.getElementById('stat-members').textContent = activeCount;
+    document.getElementById('stat-members').textContent =
+      members.filter(m => m.status === 'active').length;
   }
 
-  /* ---- BANNER DE PENDENTES ---- */
+  /* ---- BANNER PENDENTES ---- */
   function renderPendingBanner() {
     const banner  = document.getElementById('pending-banner');
     const list    = document.getElementById('pending-list');
     const pending = members.filter(m => m.status === 'pending');
 
-    if (!AUTH.isAdmin() || pending.length === 0) {
-      banner.style.display = 'none';
-      return;
-    }
+    if (!AUTH.isAdmin() || pending.length === 0) { banner.style.display = 'none'; return; }
 
     banner.style.display = 'block';
     list.innerHTML = '';
@@ -91,28 +98,47 @@ const MEMBERS = (() => {
 
     active.forEach(m => {
       const parts    = m.name.trim().split(' ');
-      const initials = (parts.length >= 2
-        ? parts[0][0] + parts[1][0]
-        : parts[0].substring(0, 2)).toUpperCase();
+      const initials = (parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].substring(0,2)).toUpperCase();
+
+      const avatarHtml = m.photo_url
+        ? `<div class="member-avatar" style="padding:0;overflow:hidden;"><img src="${m.photo_url}" style="width:100%;height:100%;object-fit:cover;" /></div>`
+        : `<div class="member-avatar">${initials}</div>`;
 
       const adminControls = AUTH.isAdmin() ? `
         <div class="member-admin-btns">
-          <button class="btn-member-edit"   onclick="MEMBERS.openEditMember(${m.id})">✎ Editar</button>
-          <button class="btn-member-remove" onclick="MEMBERS.removeMember(${m.id})">✕ Remover</button>
+          <button class="btn-member-edit"   onclick="event.stopPropagation();MEMBERS.openEditMember(${m.id})">✎</button>
+          <button class="btn-member-remove" onclick="event.stopPropagation();MEMBERS.removeMember(${m.id})">✕</button>
         </div>` : '';
 
       const card = document.createElement('div');
       card.className = 'member-card';
       card.innerHTML = `
-        <div class="member-avatar">${initials}</div>
+        ${avatarHtml}
         <div class="name">${m.name}</div>
         <div class="role">${m.role}</div>
         ${adminControls}`;
+
+      card.addEventListener('click', () => openProfile(m));
       grid.appendChild(card);
     });
   }
 
-  /* ---- CADASTRO (operador) ---- */
+  /* ---- MODAL PERFIL ---- */
+  function openProfile(m) {
+    const parts    = m.name.trim().split(' ');
+    const initials = (parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].substring(0,2)).toUpperCase();
+
+    const wrap = document.getElementById('profile-avatar-wrap');
+    wrap.innerHTML = m.photo_url
+      ? `<img src="${m.photo_url}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);filter:drop-shadow(0 0 12px rgba(200,168,75,0.4));" />`
+      : `<div class="member-avatar" style="width:120px;height:120px;font-size:40px;margin:0 auto;">${initials}</div>`;
+
+    document.getElementById('profile-name').textContent = m.name;
+    document.getElementById('profile-role').textContent = m.role;
+    document.getElementById('modal-member-profile').classList.add('open');
+  }
+
+  /* ---- CADASTRO ---- */
   function openJoinForm() {
     document.getElementById('modal-join').classList.add('open');
     document.getElementById('join-name').focus();
@@ -122,17 +148,13 @@ const MEMBERS = (() => {
     const name = document.getElementById('join-name').value.trim();
     const role = document.getElementById('join-role').value;
     if (!name) { alert('Preencha seu nome completo.'); return; }
-
     try {
       const result = await DB.post('members', { name, role, status: 'pending' });
       members.push(result[0]);
       closeModal('modal-join');
       document.getElementById('join-name').value = '';
-      showToast('Solicitação enviada! Aguarde a aprovação do admin. 🪖');
-    } catch(e) {
-      alert('Erro ao enviar solicitação. Tente novamente.');
-      console.error(e);
-    }
+      showToast('Solicitação enviada! Aguarde aprovação. 🪖');
+    } catch(e) { alert('Erro ao enviar.'); console.error(e); }
   }
 
   /* ---- APROVAR / RECUSAR ---- */
@@ -142,11 +164,8 @@ const MEMBERS = (() => {
       const m = members.find(x => x.id === id);
       if (m) m.status = 'active';
       _renderAll();
-      showToast('Operador aprovado e adicionado ao time! ✓');
-    } catch(e) {
-      alert('Erro ao aprovar membro.');
-      console.error(e);
-    }
+      showToast('Operador aprovado! ✓');
+    } catch(e) { alert('Erro ao aprovar.'); }
   }
 
   async function rejectMember(id) {
@@ -154,69 +173,95 @@ const MEMBERS = (() => {
     if (!confirm('Recusar ' + (m ? m.name : 'este operador') + '?')) return;
     try {
       await DB.delete('members', id);
-      const idx = members.findIndex(x => x.id === id);
-      if (idx !== -1) members.splice(idx, 1);
+      members.splice(members.findIndex(x => x.id === id), 1);
       _renderAll();
       showToast('Solicitação recusada.');
-    } catch(e) {
-      alert('Erro ao recusar.');
-      console.error(e);
-    }
+    } catch(e) { alert('Erro ao recusar.'); }
   }
 
-  /* ---- EDITAR ---- */
+  /* ---- EDITAR MEMBRO ---- */
   function openEditMember(id) {
     if (!AUTH.isAdmin()) return;
     const m = members.find(x => x.id === id);
     if (!m) return;
     editingMemberId = id;
-    document.getElementById('edit-member-name').value = m.name;
-    document.getElementById('edit-member-role').value = m.role;
+    document.getElementById('edit-member-name').value  = m.name;
+    document.getElementById('edit-member-role').value  = m.role;
+    document.getElementById('edit-member-photo-preview').innerHTML = m.photo_url
+      ? `<img src="${m.photo_url}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />`
+      : '';
     document.getElementById('modal-edit-member').classList.add('open');
   }
 
   async function saveEditMember() {
-    const name = document.getElementById('edit-member-name').value.trim();
-    const role = document.getElementById('edit-member-role').value.trim();
+    const name      = document.getElementById('edit-member-name').value.trim();
+    const role      = document.getElementById('edit-member-role').value.trim();
+    const photoFile = document.getElementById('edit-member-photo').files[0];
     if (!name) { alert('Preencha o nome.'); return; }
 
+    const btn = document.getElementById('btn-save-edit-member');
+    btn.textContent = 'Salvando...';
+    btn.disabled = true;
+
     try {
-      await DB.patch('members', editingMemberId, { name, role });
+      let photo_url = members.find(x => x.id === editingMemberId)?.photo_url || null;
+
+      if (photoFile) {
+        const ext      = photoFile.name.split('.').pop();
+        const fileName = `member_${editingMemberId}_${Date.now()}.${ext}`;
+        const uploadRes = await fetch(
+          `${SUPABASE_URL}/storage/v1/object/photos/${fileName}`,
+          {
+            method: 'POST',
+            headers: {
+              'apikey':        SUPABASE_ANON,
+              'Authorization': 'Bearer ' + SUPABASE_ANON,
+              'Content-Type':  photoFile.type,
+              'x-upsert':      'true'
+            },
+            body: photoFile
+          }
+        );
+        if (!uploadRes.ok) throw new Error(await uploadRes.text());
+        photo_url = `${SUPABASE_URL}/storage/v1/object/public/photos/${fileName}`;
+      }
+
+      await DB.patch('members', editingMemberId, { name, role, photo_url });
       const m = members.find(x => x.id === editingMemberId);
-      if (m) { m.name = name; m.role = role; }
+      if (m) Object.assign(m, { name, role, photo_url });
+
       closeModal('modal-edit-member');
       _renderAll();
       showToast('Membro atualizado! ✓');
+
     } catch(e) {
-      alert('Erro ao atualizar.');
+      alert('Erro ao salvar.');
       console.error(e);
+    } finally {
+      btn.textContent = 'Salvar';
+      btn.disabled = false;
     }
   }
 
   /* ---- REMOVER ---- */
   async function removeMember(id) {
     const m = members.find(x => x.id === id);
-    if (!confirm('Remover ' + (m ? m.name : 'este membro') + ' do time?')) return;
+    if (!confirm('Remover ' + (m ? m.name : 'este membro') + '?')) return;
     try {
       await DB.delete('members', id);
-      const idx = members.findIndex(x => x.id === id);
-      if (idx !== -1) members.splice(idx, 1);
+      members.splice(members.findIndex(x => x.id === id), 1);
       _renderAll();
-      showToast((m ? m.name : 'Membro') + ' removido do time.');
-    } catch(e) {
-      alert('Erro ao remover.');
-      console.error(e);
-    }
+      showToast((m ? m.name : 'Membro') + ' removido.');
+    } catch(e) { alert('Erro ao remover.'); }
   }
 
-  /* ---- UTIL ---- */
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
+    setTimeout(() => t.classList.remove('show'), 3000);
   }
 
   return { init, render, renderFromMemory, approveMember, rejectMember, openEditMember, removeMember };
