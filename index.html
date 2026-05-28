@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agulhas Negras – Squad Itu</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ==================== HEADER ==================== -->
+  <header>
+    <div class="header-inner">
+      <img src="assets/logo.png" alt="Agulhas Negras Logo" class="logo-img" />
+      <div class="header-text">
+        <h1>Agulhas <span>Negras</span></h1>
+        <p>&#9632; Squad Itu &nbsp;&#9632;&nbsp; Airsoft Team &nbsp;&#9632;&nbsp; Est. 2024</p>
+      </div>
+      <div class="header-actions">
+        <span id="admin-label" class="badge-admin" style="display:none;">ADMIN</span>
+        <button id="btn-admin-login"  class="btn-outline">&#128274; Login Admin</button>
+        <button id="btn-admin-logout" class="btn-danger"  style="display:none;">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== NAVEGAÇÃO ==================== -->
+  <nav>
+    <div class="nav-inner">
+      <button class="nav-btn active" data-page="calendar">&#128197; Calendário</button>
+      <button class="nav-btn"        data-page="games">&#127918; Missões</button>
+      <button class="nav-btn"        data-page="members">&#128100; Equipe</button>
+    </div>
+  </nav>
+
+  <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+  <main>
+
+    <!-- ===== CALENDÁRIO ===== -->
+    <div class="page active" id="page-calendar">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="stat-games">5</div><div class="stat-label">Missões em 2025</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-members">8</div><div class="stat-label">Integrantes</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-next">—</div><div class="stat-label">Dias p/ próx. jogo</div></div>
+        <div class="stat-card"><div class="stat-num">ITU</div><div class="stat-label">Base de operações</div></div>
+      </div>
+
+      <div class="admin-banner" style="display:none;">
+        <span>&#9650; MODO ADMIN — você pode adicionar e editar missões</span>
+        <button class="btn-gold" id="btn-new-game">+ Nova Missão</button>
+      </div>
+
+      <div class="section-title">Calendário Tático</div>
+      <div class="month-nav">
+        <button class="month-btn" id="btn-prev-month">&#8592;</button>
+        <div class="month-title" id="month-title">JUNHO 2025</div>
+        <button class="month-btn" id="btn-next-month">&#8594;</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <!-- ===== MISSÕES ===== -->
+    <div class="page" id="page-games">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div class="section-title" style="margin-bottom:0;">Missões</div>
+        <div class="games-tabs">
+          <button class="games-tab active" id="tab-upcoming">🗓 Agendadas</button>
+          <button class="games-tab"        id="tab-finished">✓ Finalizadas</button>
+        </div>
+      </div>
+      <div class="games-list" id="games-list"></div>
+    </div>
+
+    <!-- ===== EQUIPE ===== -->
+    <div class="page" id="page-members">
+
+      <!-- Banner de pendentes (só admin vê) -->
+      <div id="pending-banner" class="pending-banner" style="display:none;">
+        <div class="pending-banner-title">&#9888; Solicitações aguardando aprovação</div>
+        <div id="pending-list"></div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+        <div class="section-title" style="margin-bottom:0;">Equipe — Agulhas Negras</div>
+        <button class="btn-gold" id="btn-join">+ Quero entrar no time</button>
+      </div>
+
+      <div class="members-grid" id="members-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast de feedback -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== MODAL: DETALHE DO JOGO ==================== -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-detail">&#215;</button>
+    <h2 id="detail-title">-</h2>
+    <div class="modal-sub" id="detail-sub">-</div>
+    <div class="detail-row"><span class="label">Horário</span><span class="value" id="detail-time">-</span></div>
+    <div class="detail-row"><span class="label">Local</span><span class="value" id="detail-local">-</span></div>
+    <div class="detail-row"><span class="label">Modalidade</span><span class="value" id="detail-mode">-</span></div>
+    <div class="detail-row"><span class="label">Vagas</span><span class="value" id="detail-slots">-</span></div>
+    <div class="modal-desc" id="detail-desc">-</div>
+    <div class="checkin-section">
+      <h4>Check-in dos Operadores</h4>
+      <div class="member-input">
+        <input type="text" id="checkin-name" placeholder="Seu nome / callsign..." />
+        <button class="btn-gold" id="btn-checkin">CHECK-IN</button>
+      </div>
+      <div class="checkin-list" id="checkin-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: ADICIONAR JOGO ==================== -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-add">&#215;</button>
+    <h2 id="modal-add-title">Nova Missão</h2>
+    <div class="modal-sub">Preencha os dados da missão</div>
+    <div class="form-row">
+      <div class="form-group"><label>Nome da Operação</label><input type="text" id="f-name" placeholder="Ex: Operação Nocturna" /></div>
+      <div class="form-group"><label>Data</label><input type="date" id="f-date" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Horário</label><input type="time" id="f-time" value="08:00" /></div>
+      <div class="form-group"><label>Vagas</label><input type="number" id="f-slots" placeholder="Ex: 20" min="1" /></div>
+    </div>
+    <div class="form-group"><label>Local / Campo</label><input type="text" id="f-local" placeholder="Ex: Arena Delta, Itu-SP" /></div>
+    <div class="form-group">
+      <label>Modalidade</label>
+      <select id="f-mode">
+        <option>Operação</option>
+        <option>Domínio de área</option>
+        <option>VIP / Escolta</option>
+        <option>Captura de bandeira</option>
+        <option>Eliminação</option>
+        <option>Missão especial</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Descrição / Briefing</label><textarea id="f-desc" placeholder="Detalhes da operação, regras, o que levar..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-add">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-game">Adicionar Missão</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: SOLICITAR ENTRADA ==================== -->
+<div class="modal-overlay" id="modal-join">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-join">&#215;</button>
+    <h2>Quero Entrar no Time</h2>
+    <div class="modal-sub">Preencha seus dados. O admin vai revisar e aprovar seu cadastro.</div>
+    <div class="form-group"><label>Nome Completo</label><input type="text" id="join-name" placeholder="Seu nome completo" /></div>
+    <div class="form-group">
+      <label>Função / Classe</label>
+      <select id="join-role">
+        <option>Operador</option>
+        <option>Franco-atirador</option>
+        <option>Apoio</option>
+        <option>Médico de campo</option>
+        <option>Reconhecimento</option>
+        <option>Assalto</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-join">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-join">Enviar Solicitação</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: EDITAR MEMBRO (admin) ==================== -->
+<div class="modal-overlay" id="modal-edit-member">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-edit-member">&#215;</button>
+    <h2>Editar Membro</h2>
+    <div class="modal-sub">Altere os dados do operador</div>
+    <div class="form-group"><label>Nome Completo</label><input type="text" id="edit-member-name" /></div>
+    <div class="form-group">
+      <label>Função / Classe</label>
+      <input type="text" id="edit-member-role" placeholder="Ex: Operador, Franco-atirador..." />
+    </div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-edit-member">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-edit-member">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TELA DE LOGIN ADMIN ==================== -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <img src="assets/logo.png" alt="Logo" class="login-logo" />
+    <h2>Acesso Admin</h2>
+    <p>AGULHAS NEGRAS — SQUAD ITU</p>
+    <div class="login-error" id="login-error">Usuário ou senha incorretos. Tente novamente.</div>
+    <div class="form-group" style="text-align:left;"><label>Usuário</label><input type="text" id="login-user" placeholder="admin" autocomplete="username" /></div>
+    <div class="form-group" style="text-align:left;"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" /></div>
+    <button class="btn-gold" id="btn-do-login" style="width:100%;margin-top:8px;">ENTRAR</button>
+  </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/games.js"></script>
+<script src="js/members.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
