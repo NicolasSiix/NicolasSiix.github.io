@@ -288,7 +288,7 @@ const GAMES = (() => {
     const list = document.getElementById('checkin-list');
     list.innerHTML = '';
     if (activeCheckins.length === 0) {
-      list.innerHTML = '<div class="empty-state">Nenhum check-in registrado.</div>';
+      list.innerHTML = '<div class="empty-state">Nenhum check-in ainda. Seja o primeiro!</div>';
       return;
     }
     activeCheckins.forEach(c => {
@@ -296,33 +296,40 @@ const GAMES = (() => {
       item.className = 'checkin-item';
 
       const left = document.createElement('div');
-      left.style.cssText = 'display:flex;align-items:center;';
+      left.style.cssText = 'display:flex;align-items:center;flex:1;';
       left.innerHTML = `<div class="status-dot"></div><span class="member-name">${c.name}</span>`;
 
       const right = document.createElement('div');
       right.style.cssText = 'display:flex;align-items:center;gap:8px;';
       right.innerHTML = `<span class="checkin-time">✓ Confirmado</span>`;
 
-      if (AUTH.isAdmin()) {
-        const del = document.createElement('button');
-        del.textContent = '✕';
-        del.title = 'Remover check-in';
-        del.style.cssText = 'background:#2a1010;color:#c04040;border:1px solid #4a2020;border-radius:3px;width:22px;height:22px;cursor:pointer;font-size:11px;font-weight:700;';
-        del.addEventListener('click', async () => {
-          try {
-            await DB.delete('checkins', c.id);
-            activeCheckins = activeCheckins.filter(x => x.id !== c.id);
-            const g = games.find(x => x.id === activeGameId);
-            document.getElementById('detail-slots').textContent =
-              activeCheckins.length + ' / ' + (g ? g.slots : '?') + ' confirmados';
-            renderCheckins();
-          } catch(e) {
-            alert('Erro ao remover check-in.');
-            console.error(e);
+      // Botão cancelar — para admin remove direto, para operador pede confirmação do nome
+      const del = document.createElement('button');
+      del.textContent = '✕';
+      del.title = 'Cancelar check-in';
+      del.style.cssText = 'background:#2a1010;color:#c04040;border:1px solid #4a2020;border-radius:3px;width:22px;height:22px;cursor:pointer;font-size:11px;font-weight:700;flex-shrink:0;';
+      del.addEventListener('click', async () => {
+        if (!AUTH.isAdmin()) {
+          const confirm_name = prompt('Digite seu nome para cancelar o check-in:');
+          if (!confirm_name) return;
+          if (confirm_name.trim().toLowerCase() !== c.name.toLowerCase()) {
+            alert('Nome incorreto. Só você pode cancelar seu próprio check-in.');
+            return;
           }
-        });
-        right.appendChild(del);
-      }
+        }
+        try {
+          await DB.delete('checkins', c.id);
+          activeCheckins = activeCheckins.filter(x => x.id !== c.id);
+          const g = games.find(x => x.id === activeGameId);
+          document.getElementById('detail-slots').textContent =
+            activeCheckins.length + ' / ' + (g ? g.slots : '?') + ' confirmados';
+          renderCheckins();
+        } catch(e) {
+          alert('Erro ao cancelar check-in.');
+          console.error(e);
+        }
+      });
+      right.appendChild(del);
 
       item.appendChild(left);
       item.appendChild(right);
