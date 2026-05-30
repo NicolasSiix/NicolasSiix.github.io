@@ -117,6 +117,7 @@ const GAMES = (() => {
           <div class="game-tags">
             <span class="tag mode">${g.mode || '—'}</span>
             ${!isPast ? `<span class="tag ${full ? 'full' : 'open'}">${full ? 'LOTADO' : 'VAGAS ABERTAS'}</span>` : ''}
+            ${g.whatsapp ? `<a href="${g.whatsapp}" target="_blank" class="tag-whatsapp" onclick="event.stopPropagation()">📱 WhatsApp</a>` : ''}
           </div>
         </div>
         <div class="checkin-count">
@@ -191,6 +192,7 @@ const GAMES = (() => {
     document.getElementById('f-local').value = g.local        || '';
     document.getElementById('f-mode').value  = g.mode         || 'Operação';
     document.getElementById('f-desc').value  = g.description  || '';
+    if (document.getElementById('f-whatsapp')) document.getElementById('f-whatsapp').value = g.whatsapp || '';
 
     document.getElementById('modal-add-title').textContent = 'Editar Missão';
     document.getElementById('btn-save-game').textContent   = 'Salvar Alterações';
@@ -207,17 +209,16 @@ const GAMES = (() => {
     const mode  = document.getElementById('f-mode').value;
     const desc  = document.getElementById('f-desc').value.trim();
 
+    const whatsapp = document.getElementById('f-whatsapp') ? document.getElementById('f-whatsapp').value.trim() : '';
     if (!name || !date) { alert('Preencha nome e data.'); return; }
 
     try {
       if (editingGameId) {
-        // Editar existente
-        await DB.patch('games', editingGameId, { name, date, time, slots, local, mode, description: desc });
+        await DB.patch('games', editingGameId, { name, date, time, slots, local, mode, description: desc, whatsapp });
         const g = games.find(x => x.id === editingGameId);
-        if (g) Object.assign(g, { name, date, time, slots, local, mode, description: desc });
+        if (g) Object.assign(g, { name, date, time, slots, local, mode, description: desc, whatsapp });
       } else {
-        // Novo jogo
-        const result = await DB.post('games', { name, date, time, slots, local, mode, description: desc });
+        const result = await DB.post('games', { name, date, time, slots, local, mode, description: desc, whatsapp });
         games.push(result[0]);
       }
 
@@ -244,7 +245,7 @@ const GAMES = (() => {
   }
 
   function clearForm() {
-    ['f-name','f-date','f-local','f-desc','f-slots'].forEach(id => {
+    ['f-name','f-date','f-local','f-desc','f-slots','f-whatsapp'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -268,6 +269,17 @@ const GAMES = (() => {
     document.getElementById('detail-local').textContent  = g.local || '—';
     document.getElementById('detail-mode').textContent   = g.mode  || '—';
     document.getElementById('detail-desc').textContent   = g.description || '—';
+
+    // Botão WhatsApp no modal
+    const waWrap = document.getElementById('detail-whatsapp-wrap');
+    if (waWrap) {
+      if (g.whatsapp) {
+        waWrap.innerHTML = `<a href="${g.whatsapp}" target="_blank" class="btn-whatsapp">📱 Entrar no Grupo do WhatsApp</a>`;
+        waWrap.style.display = 'block';
+      } else {
+        waWrap.style.display = 'none';
+      }
+    }
 
     const checkinInput = document.querySelector('.checkin-section .member-input');
     if (checkinInput) checkinInput.style.display = isPast ? 'none' : 'flex';

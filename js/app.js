@@ -13,13 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   ABOUT.init();
 
   // Carrega dados do banco
-  try { games   = await DB.get('games',   'order=date.asc');        } catch(e) { console.error(e); }
-  try { members = await DB.get('members', 'order=created_at.asc');  } catch(e) { console.error(e); }
+  try { games   = await DB.get('games',   'order=date.asc');       } catch(e) { console.error('[APP] games:', e); }
+  try { members = await DB.get('members', 'order=created_at.asc'); } catch(e) { console.error('[APP] members:', e); }
 
   // Renderiza estado inicial
   GAMES.updateStats();
   CALENDAR.render();
   MEMBERS.renderFromMemory();
+
+  // Pré-carrega conteúdo de O Time em background
+  ABOUT.render();
 
   // Navegação
   document.querySelectorAll('.nav-btn').forEach(btn => {
