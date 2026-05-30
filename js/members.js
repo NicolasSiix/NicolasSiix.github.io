@@ -147,10 +147,18 @@ const MEMBERS = (() => {
           <input type="file" id="self-photo-file" accept="image/*"
             style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;width:100%;font-size:12px;" />
           <div id="self-photo-preview" style="margin-top:8px;"></div>
-          <button onclick="MEMBERS.uploadSelfPhoto(${m.id})" class="btn-gold" style="width:100%;margin-top:10px;">
+          <button id="btn-self-photo-save" data-member-id="${m.id}" class="btn-gold" style="width:100%;margin-top:10px;">
             Salvar Foto
           </button>
         </div>`;
+
+      // Adiciona listener no botão após inserir no DOM
+      setTimeout(() => {
+        const saveBtn = document.getElementById('btn-self-photo-save');
+        if (saveBtn) {
+          saveBtn.addEventListener('click', () => uploadSelfPhoto(parseInt(saveBtn.dataset.memberId)));
+        }
+      }, 50);
 
       // Preview
       setTimeout(() => {
@@ -342,6 +350,6 @@ const MEMBERS = (() => {
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  return { init, render, renderFromMemory, approveMember, rejectMember, openEditMember, removeMember };
+  return { init, render, renderFromMemory, approveMember, rejectMember, openEditMember, removeMember, uploadSelfPhoto };
 
 })();
