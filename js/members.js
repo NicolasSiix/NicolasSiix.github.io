@@ -147,7 +147,7 @@ const MEMBERS = (() => {
           <input type="file" id="self-photo-file" accept="image/*"
             style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;width:100%;font-size:12px;" />
           <div id="self-photo-preview" style="margin-top:8px;"></div>
-          <button onclick="MEMBERS.uploadSelfPhoto(${m.id})" class="btn-gold" style="width:100%;margin-top:10px;">
+          <button onclick="window._membersUploadSelfPhoto(${m.id})" class="btn-gold" style="width:100%;margin-top:10px;">
             Salvar Foto
           </button>
         </div>`;
@@ -341,6 +341,9 @@ const MEMBERS = (() => {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
   }
+
+  // Expõe globalmente para o onclick inline do botão de perfil
+  window._membersUploadSelfPhoto = uploadSelfPhoto;
 
   return { init, render, renderFromMemory, approveMember, rejectMember, openEditMember, removeMember, uploadSelfPhoto };
 
