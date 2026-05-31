@@ -89,11 +89,14 @@
 
     <!-- FOTOS -->
     <div class="page" id="page-photos">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <div class="section-title" style="margin-bottom:0;">Galeria de Fotos</div>
-        <button class="btn-gold admin-only" id="btn-add-photo" style="display:none;">+ Adicionar Foto</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gold admin-only" id="btn-new-album" style="display:none;">+ Novo Álbum</button>
+          <button class="btn-gold admin-only" id="btn-add-photo" style="display:none;">+ Adicionar Foto</button>
+        </div>
       </div>
-      <div class="photos-grid" id="photos-grid"></div>
+      <div id="photos-container"></div>
     </div>
 
     <!-- O TIME (Quem Somos + Regras) -->
@@ -232,17 +235,31 @@
   </div>
 </div>
 
+<!-- MODAL: NOVO ÁLBUM -->
+<div class="modal-overlay" id="modal-new-album">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" id="modal-close-new-album">&#215;</button>
+    <h2>Novo Álbum</h2>
+    <div class="modal-sub">Crie um álbum para organizar as fotos da operação</div>
+    <div class="form-group"><label>Nome do Álbum</label><input type="text" id="new-album-name" placeholder="Ex: Operação Florestal 2025" /></div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-new-album">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-new-album">Criar Álbum</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: ADICIONAR FOTO -->
 <div class="modal-overlay" id="modal-add-photo">
   <div class="modal">
     <button class="modal-close" id="modal-close-add-photo">&#215;</button>
     <h2>Adicionar Foto</h2>
-    <div class="modal-sub">Selecione uma imagem para a galeria</div>
+    <div class="modal-sub">Selecione uma imagem para o álbum</div>
     <div class="form-group">
       <label>Imagem</label>
       <input type="file" id="photo-file" accept="image/*" style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px;width:100%;" />
     </div>
-    <div class="form-group"><label>Legenda (opcional)</label><input type="text" id="photo-caption" placeholder="Ex: Operação Florestal 2025" /></div>
+    <div class="form-group"><label>Legenda (opcional)</label><input type="text" id="photo-caption" placeholder="Ex: Tomada de posição..." /></div>
     <div id="photo-preview" style="margin-top:8px;"></div>
     <div class="form-actions">
       <button class="btn-outline" id="btn-cancel-add-photo">Cancelar</button>
@@ -265,13 +282,20 @@
   </div>
 </div>
 
-<!-- MODAL: VISUALIZAR FOTO -->
-<div class="modal-overlay" id="modal-view-photo">
-  <div class="modal" style="max-width:700px;text-align:center;background:transparent;border:none;">
-    <button class="modal-close" id="modal-close-view-photo" style="color:#fff;">&#215;</button>
-    <img id="view-photo-img" src="" style="max-width:100%;max-height:70vh;border-radius:6px;display:block;margin:0 auto;" />
-    <div id="view-photo-caption" style="color:#ccc;margin-top:10px;font-size:14px;"></div>
-    <button id="btn-delete-photo" class="btn-danger" style="display:none;margin-top:12px;">🗑 Excluir Foto</button>
+<!-- MODAL: LIGHTBOX (vitrine) -->
+<div class="modal-overlay" id="modal-lightbox" style="background:rgba(0,0,0,0.95);">
+  <div class="lightbox-inner">
+    <button class="modal-close" id="modal-close-lightbox" style="color:#fff;position:absolute;top:16px;right:16px;z-index:10;">&#215;</button>
+    <button class="lightbox-nav" id="btn-lightbox-prev">&#8592;</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" />
+      <div class="lightbox-footer">
+        <div id="lightbox-caption"></div>
+        <div id="lightbox-counter"></div>
+        <button id="btn-delete-photo" class="btn-danger" style="display:none;">🗑 Excluir</button>
+      </div>
+    </div>
+    <button class="lightbox-nav" id="btn-lightbox-next">&#8594;</button>
   </div>
 </div>
 
