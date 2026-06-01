@@ -1428,3 +1428,36 @@ main {
   .lightbox-inner { padding: 12px; gap: 8px; }
   .lightbox-nav { width: 36px; height: 36px; font-size: 16px; }
 }
+
+/* ---- SELETOR DE CLASSE ---- */
+.class-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.class-btn, .class-btn-edit {
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 8px;
+  border-radius: 6px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.class-btn:hover, .class-btn-edit:hover {
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.class-btn.active, .class-btn-edit.active {
+  background: var(--olive-dark);
+  border-color: var(--gold);
+  color: var(--gold);
+}

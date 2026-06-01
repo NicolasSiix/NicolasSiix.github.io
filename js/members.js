@@ -17,6 +17,22 @@ const MEMBERS = (() => {
     safeOn('modal-close-join',       'click', () => closeModal('modal-join'));
     safeOn('btn-cancel-join',        'click', () => closeModal('modal-join'));
     safeOn('btn-save-join',          'click', submitJoin);
+
+    // Seletor de classe no formulário de entrada
+    document.addEventListener('click', e => {
+      if (e.target && e.target.dataset.action === 'select-class') {
+        document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const hidden = document.getElementById('join-role-hidden');
+        if (hidden) hidden.value = e.target.dataset.class;
+      }
+      if (e.target && e.target.dataset.action === 'select-class-edit') {
+        document.querySelectorAll('.class-btn-edit').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const hidden = document.getElementById('edit-member-role-hidden');
+        if (hidden) hidden.value = e.target.dataset.class;
+      }
+    });
     safeOn('modal-close-edit-member','click', () => closeModal('modal-edit-member'));
     safeOn('btn-cancel-edit-member', 'click', () => closeModal('modal-edit-member'));
     safeOn('btn-save-edit-member',   'click', saveEditMember);
@@ -113,15 +129,33 @@ const MEMBERS = (() => {
         ? `<div class="member-avatar" style="padding:0;overflow:hidden;"><img src="${m.photo_url}" style="width:100%;height:100%;object-fit:cover;" /></div>`
         : `<div class="member-avatar">${initials}</div>`;
 
-      const adminControls = AUTH.isAdmin() ? `
-        <div class="member-admin-btns">
-          <button class="btn-member-edit"   data-action="edit-member"   data-id="${m.id}">✎</button>
-          <button class="btn-member-remove" data-action="remove-member" data-id="${m.id}">✕</button>
-        </div>` : '';
-
       const card = document.createElement('div');
       card.className = 'member-card';
-      card.innerHTML = `${avatarHtml}<div class="name">${m.name}</div><div class="role">${m.role}</div>${adminControls}`;
+      card.innerHTML = `${avatarHtml}<div class="name">${m.name}</div><div class="role">${m.role}</div>`;
+
+      if (AUTH.isAdmin()) {
+        const adminDiv = document.createElement('div');
+        adminDiv.className = 'member-admin-btns';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-member-edit';
+        editBtn.textContent = '✎';
+        editBtn.dataset.action = 'edit-member';
+        editBtn.dataset.id = m.id;
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openEditMember(m.id); });
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-member-remove';
+        removeBtn.textContent = '✕';
+        removeBtn.dataset.action = 'remove-member';
+        removeBtn.dataset.id = m.id;
+        removeBtn.addEventListener('click', e => { e.stopPropagation(); removeMember(m.id); });
+
+        adminDiv.appendChild(editBtn);
+        adminDiv.appendChild(removeBtn);
+        card.appendChild(adminDiv);
+      }
+
       card.addEventListener('click', () => openProfile(m));
       grid.appendChild(card);
     });
@@ -227,8 +261,9 @@ const MEMBERS = (() => {
 
   async function submitJoin() {
     const name = document.getElementById('join-name').value.trim();
-    const role = document.getElementById('join-role').value;
+    const role = document.getElementById('join-role-hidden') ? document.getElementById('join-role-hidden').value : 'Assault';
     if (!name) { alert('Preencha seu nome completo.'); return; }
+    if (!role) { alert('Selecione sua classe.'); return; }
     try {
       const result = await DB.post('members', { name, role, status: 'pending' });
       members.push(result[0]);
@@ -267,7 +302,12 @@ const MEMBERS = (() => {
     if (!m) return;
     editingMemberId = id;
     document.getElementById('edit-member-name').value  = m.name;
-    document.getElementById('edit-member-role').value  = m.role;
+    const hiddenRole = document.getElementById('edit-member-role-hidden');
+    if (hiddenRole) hiddenRole.value = m.role;
+    // Marca a classe ativa
+    document.querySelectorAll('.class-btn-edit').forEach(b => {
+      b.classList.toggle('active', b.dataset.class === m.role);
+    });
     document.getElementById('edit-member-photo-preview').innerHTML = m.photo_url
       ? `<img src="${m.photo_url}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />`
       : '';
@@ -276,7 +316,7 @@ const MEMBERS = (() => {
 
   async function saveEditMember() {
     const name      = document.getElementById('edit-member-name').value.trim();
-    const role      = document.getElementById('edit-member-role').value.trim();
+    const role      = document.getElementById('edit-member-role-hidden') ? document.getElementById('edit-member-role-hidden').value.trim() : '';
     const photoFile = document.getElementById('edit-member-photo').files[0];
     if (!name) { alert('Preencha o nome.'); return; }
 

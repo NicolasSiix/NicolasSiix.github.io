@@ -191,11 +191,14 @@
     <div class="modal-sub">Preencha seus dados. O admin vai revisar e aprovar seu cadastro.</div>
     <div class="form-group"><label>Nome Completo</label><input type="text" id="join-name" placeholder="Seu nome completo" /></div>
     <div class="form-group">
-      <label>Função / Classe</label>
-      <select id="join-role">
-        <option>Operador</option><option>Franco-atirador</option><option>Apoio</option>
-        <option>Médico de campo</option><option>Reconhecimento</option><option>Assalto</option>
-      </select>
+      <label>Classe</label>
+      <input type="hidden" id="join-role-hidden" value="Assault" />
+      <div class="class-selector">
+          <button type="button" class="class-btn active" data-action="select-class" data-class="Assault">Assault</button>
+          <button type="button" class="class-btn" data-action="select-class" data-class="DMR">DMR</button>
+          <button type="button" class="class-btn" data-action="select-class" data-class="Sniper">Sniper</button>
+          <button type="button" class="class-btn" data-action="select-class" data-class="Suporte">Suporte</button>
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn-outline" id="btn-cancel-join">Cancelar</button>
@@ -211,7 +214,16 @@
     <h2>Editar Membro</h2>
     <div class="modal-sub">Altere os dados do operador</div>
     <div class="form-group"><label>Nome Completo</label><input type="text" id="edit-member-name" /></div>
-    <div class="form-group"><label>Função / Classe</label><input type="text" id="edit-member-role" /></div>
+    <div class="form-group">
+      <label>Classe</label>
+      <input type="hidden" id="edit-member-role-hidden" value="" />
+      <div class="class-selector">
+          <button type="button" class="class-btn-edit" data-action="select-class-edit" data-class="Assault">Assault</button>
+          <button type="button" class="class-btn-edit" data-action="select-class-edit" data-class="DMR">DMR</button>
+          <button type="button" class="class-btn-edit" data-action="select-class-edit" data-class="Sniper">Sniper</button>
+          <button type="button" class="class-btn-edit" data-action="select-class-edit" data-class="Suporte">Suporte</button>
+      </div>
+    </div>
     <div class="form-group">
       <label>Foto de Perfil</label>
       <input type="file" id="edit-member-photo" accept="image/*" style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px;width:100%;" />
