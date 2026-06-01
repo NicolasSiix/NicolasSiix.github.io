@@ -43,6 +43,22 @@ const MEMBERS = (() => {
       if (e.target && e.target.dataset.action === 'upload-self-photo') {
         uploadSelfPhoto(parseInt(e.target.dataset.id));
       }
+
+      // Seletor de classe — formulário de entrada
+      if (e.target && e.target.classList.contains('class-btn')) {
+        document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const hidden = document.getElementById('join-role-hidden');
+        if (hidden) hidden.value = e.target.dataset.class;
+      }
+
+      // Seletor de classe — formulário de editar
+      if (e.target && e.target.classList.contains('class-btn-edit')) {
+        document.querySelectorAll('.class-btn-edit').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const hidden = document.getElementById('edit-member-role-hidden');
+        if (hidden) hidden.value = e.target.dataset.class;
+      }
     });
   }
 
