@@ -48,10 +48,19 @@ const FEEDBACK = (() => {
 
     let finishedGames = [];
     try {
-      const todayStr = todayLocal();
-      const all = await DB.get('games', 'order=date.desc');
-      finishedGames = all.filter(g => g.date < todayStr);
+      const _t = new Date();
+      const todayStr = _t.getFullYear() + '-' + String(_t.getMonth()+1).padStart(2,'0') + '-' + String(_t.getDate()).padStart(2,'0');
+      console.log('[FEEDBACK] hoje:', todayStr);
+      // Usa array global games já carregado
+      if (games && games.length > 0) {
+        finishedGames = games.filter(g => g.date < todayStr);
+      } else {
+        const all = await DB.get('games', 'order=date.desc');
+        finishedGames = all.filter(g => g.date < todayStr);
+      }
+      console.log('[FEEDBACK] jogos finalizados:', finishedGames.length);
     } catch(e) {
+      console.error('[FEEDBACK] erro:', e);
       container.innerHTML = '<div class="empty-state">Erro ao carregar jogos.</div>';
       return;
     }
@@ -122,10 +131,7 @@ const FEEDBACK = (() => {
     return `${html} <span style="font-size:12px;color:var(--text-muted);">${avg}</span>`;
   }
 
-  function todayLocal() {
-    const t = new Date();
-    return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0');
-  }
+
 
   /* ---- LISTA DE FEEDBACKS ---- */
   async function openFeedbackList(g) {
