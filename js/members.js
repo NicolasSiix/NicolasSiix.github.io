@@ -53,13 +53,9 @@ const MEMBERS = (() => {
       reader.readAsDataURL(file);
     });
 
-    // Delegação de eventos para botões gerados dinamicamente
+    // Delegação apenas para upload de foto própria (único que precisa)
     document.addEventListener('click', function(e) {
       const t = e.target;
-      if (t.dataset.action === 'approve-member')  { e.stopPropagation(); approveMember(parseInt(t.dataset.id)); }
-      if (t.dataset.action === 'reject-member')   { e.stopPropagation(); rejectMember(parseInt(t.dataset.id)); }
-      if (t.dataset.action === 'edit-member')     { e.stopPropagation(); openEditMember(parseInt(t.dataset.id)); }
-      if (t.dataset.action === 'remove-member')   { e.stopPropagation(); removeMember(parseInt(t.dataset.id)); }
       if (t.dataset.action === 'upload-self-photo') { uploadSelfPhoto(parseInt(t.dataset.id)); }
     });
   }
@@ -102,10 +98,20 @@ const MEMBERS = (() => {
           <span class="pending-name">${p.name}</span>
           <span class="pending-role">${p.role}</span>
         </div>
-        <div class="pending-actions">
-          <button class="btn-approve" data-action="approve-member" data-id="${p.id}">✓ Aprovar</button>
-          <button class="btn-reject"  data-action="reject-member"  data-id="${p.id}">✕ Recusar</button>
-        </div>`;
+        <div class="pending-actions"></div>`;
+
+      const approveBtn = document.createElement('button');
+      approveBtn.className = 'btn-approve';
+      approveBtn.textContent = '✓ Aprovar';
+      approveBtn.addEventListener('click', () => approveMember(p.id));
+
+      const rejectBtn = document.createElement('button');
+      rejectBtn.className = 'btn-reject';
+      rejectBtn.textContent = '✕ Recusar';
+      rejectBtn.addEventListener('click', () => rejectMember(p.id));
+
+      item.querySelector('.pending-actions').appendChild(approveBtn);
+      item.querySelector('.pending-actions').appendChild(rejectBtn);
       list.appendChild(item);
     });
   }
@@ -140,15 +146,11 @@ const MEMBERS = (() => {
         const editBtn = document.createElement('button');
         editBtn.className = 'btn-member-edit';
         editBtn.textContent = '✎';
-        editBtn.dataset.action = 'edit-member';
-        editBtn.dataset.id = m.id;
         editBtn.addEventListener('click', e => { e.stopPropagation(); openEditMember(m.id); });
 
         const removeBtn = document.createElement('button');
         removeBtn.className = 'btn-member-remove';
         removeBtn.textContent = '✕';
-        removeBtn.dataset.action = 'remove-member';
-        removeBtn.dataset.id = m.id;
         removeBtn.addEventListener('click', e => { e.stopPropagation(); removeMember(m.id); });
 
         adminDiv.appendChild(editBtn);
