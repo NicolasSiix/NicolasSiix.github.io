@@ -168,6 +168,7 @@ const FEEDBACK = (() => {
             ? `<img src="${photo}" class="feedback-avatar" />`
             : `<div class="feedback-avatar feedback-avatar-initials">${initials}</div>`}
           <div class="feedback-item-name">${name}</div>
+          ${AUTH.isAdmin() ? `<button class="btn-delete-feedback" data-id="${fb.id}" title="Excluir avaliação" style="margin-left:auto;background:#2a1010;color:#c04040;border:1px solid #4a2020;border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:13px;">🗑</button>` : ''}
         </div>
         <div class="feedback-item-stars">
           <div class="stars-row"><span>Recepção</span>${starsDisplay(fb.recepcao)}</div>
@@ -175,6 +176,22 @@ const FEEDBACK = (() => {
           <div class="stars-row"><span>Campo</span>${starsDisplay(fb.campo)}</div>
         </div>
         ${fb.comentario ? `<div class="feedback-comment">"${fb.comentario}"</div>` : ''}`;
+
+      // Botão excluir
+      const delBtn = item.querySelector('.btn-delete-feedback');
+      if (delBtn) {
+        delBtn.addEventListener('click', async () => {
+          if (!confirm('Excluir esta avaliação?')) return;
+          try {
+            await DB.delete('feedbacks', fb.id);
+            item.remove();
+            showToast('Avaliação excluída.');
+            render();
+          } catch(e) {
+            alert('Erro ao excluir.');
+          }
+        });
+      }
 
       body.appendChild(item);
     });
