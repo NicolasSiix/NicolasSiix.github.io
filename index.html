@@ -33,6 +33,7 @@
     <div class="nav-inner">
       <button class="nav-btn active" data-page="calendar">&#128197; Calendário</button>
       <button class="nav-btn"        data-page="games">&#127918; Missões</button>
+      <button class="nav-btn"        data-page="feedback">&#11088; Avaliações</button>
       <button class="nav-btn"        data-page="members">&#128100; Equipe</button>
       <button class="nav-btn"        data-page="photos">&#128247; Fotos</button>
       <button class="nav-btn"        data-page="about">&#9876; O Time</button>
@@ -72,6 +73,12 @@
         </div>
       </div>
       <div class="games-list" id="games-list"></div>
+    </div>
+
+    <!-- AVALIAÇÕES -->
+    <div class="page" id="page-feedback">
+      <div class="section-title">Avaliações das Missões</div>
+      <div id="feedback-container"></div>
     </div>
 
     <!-- EQUIPE -->
@@ -311,6 +318,70 @@
   </div>
 </div>
 
+<!-- MODAL: LISTA DE FEEDBACKS -->
+<div class="modal-overlay" id="modal-feedback-list">
+  <div class="modal" style="max-width:560px;">
+    <button class="modal-close" id="modal-close-feedback-list">&#215;</button>
+    <h2 id="feedback-list-title">Avaliações</h2>
+    <div class="modal-sub">O que o time achou desta missão</div>
+    <div id="feedback-list-body"></div>
+  </div>
+</div>
+
+<!-- MODAL: FORMULÁRIO DE AVALIAÇÃO -->
+<div class="modal-overlay" id="modal-feedback-form">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" id="modal-close-feedback-form">&#215;</button>
+    <h2>Avaliar Missão</h2>
+    <div class="modal-sub" id="feedback-form-title"></div>
+
+    <div class="form-group">
+      <label>Seu Nome</label>
+      <select id="feedback-member-select" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;color:var(--text);font-family:Rajdhani,sans-serif;font-size:14px;outline:none;"></select>
+    </div>
+
+    <div class="form-group">
+      <label>Avaliação da Recepção</label>
+      <input type="hidden" id="feedback-recepcao" value="0" />
+      <div class="stars-input">
+        <span id="star-recepcao-1" class="star-btn" data-action="set-star" data-group="recepcao" data-val="1">★</span>
+        <span id="star-recepcao-2" class="star-btn" data-action="set-star" data-group="recepcao" data-val="2">★</span>
+        <span id="star-recepcao-3" class="star-btn" data-action="set-star" data-group="recepcao" data-val="3">★</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Avaliação da Organização do Jogo</label>
+      <input type="hidden" id="feedback-organizacao" value="0" />
+      <div class="stars-input">
+        <span id="star-organizacao-1" class="star-btn" data-action="set-star" data-group="organizacao" data-val="1">★</span>
+        <span id="star-organizacao-2" class="star-btn" data-action="set-star" data-group="organizacao" data-val="2">★</span>
+        <span id="star-organizacao-3" class="star-btn" data-action="set-star" data-group="organizacao" data-val="3">★</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Avaliação do Campo</label>
+      <input type="hidden" id="feedback-campo" value="0" />
+      <div class="stars-input">
+        <span id="star-campo-1" class="star-btn" data-action="set-star" data-group="campo" data-val="1">★</span>
+        <span id="star-campo-2" class="star-btn" data-action="set-star" data-group="campo" data-val="2">★</span>
+        <span id="star-campo-3" class="star-btn" data-action="set-star" data-group="campo" data-val="3">★</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Comente sobre</label>
+      <textarea id="feedback-comentario" placeholder="Compartilhe sua opinião sobre a missão..." style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-feedback">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-feedback">Enviar Avaliação</button>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN ADMIN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
@@ -332,6 +403,7 @@
 <script src="js/members.js"></script>
 <script src="js/photos.js"></script>
 <script src="js/about.js"></script>
+<script src="js/feedback.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

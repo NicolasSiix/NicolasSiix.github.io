@@ -1461,3 +1461,153 @@ main {
   border-color: var(--gold);
   color: var(--gold);
 }
+
+/* ---- FEEDBACK ---- */
+.feedback-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feedback-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.feedback-card-header { margin-bottom: 14px; }
+
+.feedback-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.feedback-game-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+
+.feedback-local { font-size: 13px; color: var(--text-muted); }
+
+.feedback-stars-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--surface2);
+  border-radius: 6px;
+}
+
+.stars-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.stars-row span:first-child { min-width: 100px; }
+
+.feedback-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.feedback-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* Stars input */
+.stars-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.star-btn {
+  font-size: 32px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s, transform 0.15s;
+  user-select: none;
+}
+
+.star-btn:hover { color: #f5c518; transform: scale(1.2); }
+
+/* Feedback list items */
+.feedback-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.feedback-item-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.feedback-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  flex-shrink: 0;
+}
+
+.feedback-avatar-initials {
+  background: var(--olive-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.feedback-item-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--white);
+}
+
+.feedback-item-stars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.feedback-comment {
+  font-size: 14px;
+  color: var(--text);
+  font-style: italic;
+  padding: 10px 12px;
+  background: var(--olive-dark);
+  border-radius: 4px;
+  border-left: 3px solid var(--gold);
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .feedback-card-footer { flex-direction: column; align-items: flex-start; }
+  .stars-row span:first-child { min-width: 85px; font-size: 12px; }
+}
