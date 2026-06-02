@@ -1908,3 +1908,44 @@ main {
   margin-top: 6px;
   display: inline-block;
 }
+
+/* ---- EQUIPE — melhor legibilidade ---- */
+.member-card {
+  padding: 20px 16px;
+}
+
+.member-avatar {
+  width: 60px;
+  height: 60px;
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.member-card .name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.member-card .role {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.badge-guest {
+  font-size: 10px;
+  padding: 3px 9px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .member-card { padding: 14px 10px; }
+  .member-avatar { width: 50px; height: 50px; font-size: 18px; }
+  .member-card .name { font-size: 14px; }
+  .member-card .role { font-size: 11px; }
+}
