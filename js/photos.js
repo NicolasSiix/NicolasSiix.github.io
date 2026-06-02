@@ -254,53 +254,71 @@ const PHOTOS = (() => {
   async function uploadPhoto() {
     const fileInput = document.getElementById('photo-file');
     const caption   = document.getElementById('photo-caption').value.trim();
-    const file      = fileInput.files[0];
-    if (!file) { alert('Selecione uma imagem.'); return; }
+    const files     = fileInput ? Array.from(fileInput.files) : [];
+    if (files.length === 0) { alert('Selecione pelo menos uma imagem.'); return; }
 
     const btn = document.getElementById('btn-save-photo');
-    btn.textContent = 'Enviando...';
-    btn.disabled = true;
+    if (btn) { btn.textContent = `Enviando 0/${files.length}...`; btn.disabled = true; }
 
-    try {
-      const ext      = file.name.split('.').pop();
-      const fileName = `album_${currentAlbumId}_${Date.now()}.${ext}`;
+    let firstUrl = null;
+    let uploaded = 0;
+    let errors   = 0;
 
-      const uploadRes = await fetch(
-        `${SUPABASE_URL}/storage/v1/object/photos/${fileName}`,
-        {
-          method: 'POST',
-          headers: {
-            'apikey':        SUPABASE_ANON,
-            'Authorization': 'Bearer ' + SUPABASE_ANON,
-            'Content-Type':  file.type,
-            'x-upsert':      'true'
-          },
-          body: file
-        }
-      );
+    for (const file of files) {
+      try {
+        const ext      = file.name.split('.').pop();
+        const fileName = `album_${currentAlbumId}_${Date.now()}_${Math.random().toString(36).substr(2,5)}.${ext}`;
 
-      if (!uploadRes.ok) throw new Error(await uploadRes.text());
+        const uploadRes = await fetch(
+          `${SUPABASE_URL}/storage/v1/object/photos/${fileName}`,
+          {
+            method: 'POST',
+            headers: {
+              'apikey':        SUPABASE_ANON,
+              'Authorization': 'Bearer ' + SUPABASE_ANON,
+              'Content-Type':  file.type,
+              'x-upsert':      'true'
+            },
+            body: file
+          }
+        );
 
-      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/photos/${fileName}`;
-      const result    = await DB.post('photos', { url: publicUrl, caption, album_id: currentAlbumId });
+        if (!uploadRes.ok) throw new Error(await uploadRes.text());
 
-      // Atualiza capa do álbum se for a primeira foto
-      const albumPhotos = await DB.get('photos', `album_id=eq.${currentAlbumId}&order=created_at.asc&limit=1`);
-      if (albumPhotos.length === 1) {
-        await DB.patch('albums', currentAlbumId, { cover_url: publicUrl });
+        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/photos/${fileName}`;
+        await DB.post('photos', { url: publicUrl, caption, album_id: currentAlbumId });
+
+        if (!firstUrl) firstUrl = publicUrl;
+        uploaded++;
+        if (btn) btn.textContent = `Enviando ${uploaded}/${files.length}...`;
+
+      } catch(e) {
+        console.error('Erro ao enviar:', file.name, e);
+        errors++;
       }
-
-      closeModal('modal-add-photo');
-      showToast('Foto adicionada! 📷');
-      await renderAlbumPhotos();
-
-    } catch(e) {
-      alert('Erro ao enviar foto: ' + e.message);
-      console.error(e);
-    } finally {
-      btn.textContent = 'Enviar Foto';
-      btn.disabled = false;
     }
+
+    // Atualiza capa do álbum se ainda não tiver
+    if (firstUrl) {
+      try {
+        const albumPhotos = await DB.get('photos', `album_id=eq.${currentAlbumId}&order=created_at.asc&limit=1`);
+        if (albumPhotos.length <= uploaded) {
+          await DB.patch('albums', currentAlbumId, { cover_url: firstUrl });
+        }
+      } catch(e) {}
+    }
+
+    closeModal('modal-add-photo');
+
+    if (errors > 0) {
+      showToast(`${uploaded} foto(s) enviada(s), ${errors} erro(s).`);
+    } else {
+      showToast(`${uploaded} foto(s) adicionada(s)! 📷`);
+    }
+
+    await renderAlbumPhotos();
+
+    if (btn) { btn.textContent = 'Enviar Foto'; btn.disabled = false; }
   }
 
   /* ---- LIGHTBOX (vitrine) ---- */
