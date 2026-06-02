@@ -87,11 +87,19 @@
         <div class="pending-banner-title">&#9888; Solicitações aguardando aprovação</div>
         <div id="pending-list"></div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
         <div class="section-title" style="margin-bottom:0;">Equipe — Agulhas Negras</div>
-        <button class="btn-gold" id="btn-join">+ Quero entrar no time</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-gold"    id="btn-join">+ Entrar no Time</button>
+          <button class="btn-outline" id="btn-join-guest">+ Cadastro de Convidado</button>
+        </div>
       </div>
       <div class="members-grid" id="members-grid"></div>
+
+      <div style="margin-top:32px;">
+        <div class="section-title" style="margin-bottom:16px;">Convidados & Outras Equipes</div>
+        <div class="members-grid" id="guests-grid"></div>
+      </div>
     </div>
 
     <!-- FOTOS -->
@@ -186,6 +194,31 @@
     <div class="form-actions">
       <button class="btn-outline" id="btn-cancel-add">Cancelar</button>
       <button class="btn-gold"    id="btn-save-game">Adicionar Missão</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CADASTRO DE CONVIDADO -->
+<div class="modal-overlay" id="modal-join-guest">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-join-guest">&#215;</button>
+    <h2>Cadastro de Convidado</h2>
+    <div class="modal-sub">Para visitantes e membros de outras equipes. O admin vai revisar e aprovar.</div>
+    <div class="form-group"><label>Nome Completo</label><input type="text" id="guest-name" placeholder="Seu nome completo" /></div>
+    <div class="form-group"><label>Equipe / Time (opcional)</label><input type="text" id="guest-team" placeholder="Ex: Squad Alpha, Visitante..." /></div>
+    <div class="form-group">
+      <label>Classe</label>
+      <input type="hidden" id="guest-role-hidden" value="Assault" />
+      <div class="class-selector">
+        <button type="button" class="class-btn-guest active" data-class="Assault">Assault</button>
+        <button type="button" class="class-btn-guest" data-class="DMR">DMR</button>
+        <button type="button" class="class-btn-guest" data-class="Sniper">Sniper</button>
+        <button type="button" class="class-btn-guest" data-class="Suporte">Suporte</button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-join-guest">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-join-guest">Enviar Solicitação</button>
     </div>
   </div>
 </div>

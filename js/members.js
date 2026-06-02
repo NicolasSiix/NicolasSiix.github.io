@@ -38,6 +38,13 @@ const MEMBERS = (() => {
       reader.readAsDataURL(file);
     });
 
+    // Guest join button
+    safeOn('btn-join-guest',           'click', openJoinGuestForm);
+    safeOn('modal-close-join-guest',   'click', () => closeModal('modal-join-guest'));
+    safeOn('btn-cancel-join-guest',    'click', () => closeModal('modal-join-guest'));
+    safeOn('btn-save-join-guest',      'click', submitJoinGuest);
+    safeOn('modal-join-guest', 'click', function(e) { if (e.target === this) closeModal('modal-join-guest'); });
+
     // Upload foto própria via data-action
     document.addEventListener('click', function(e) {
       if (e.target && e.target.dataset.action === 'upload-self-photo') {
@@ -59,6 +66,14 @@ const MEMBERS = (() => {
         const hidden = document.getElementById('edit-member-role-hidden');
         if (hidden) hidden.value = e.target.dataset.class;
       }
+
+      // Seletor de classe — formulário de convidado
+      if (e.target && e.target.classList.contains('class-btn-guest')) {
+        document.querySelectorAll('.class-btn-guest').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        const hidden = document.getElementById('guest-role-hidden');
+        if (hidden) hidden.value = e.target.dataset.class;
+      }
     });
   }
 
@@ -75,7 +90,8 @@ const MEMBERS = (() => {
   function _renderAll() {
     renderPendingBanner();
     renderActiveMembers();
-    const count = members.filter(m => m.status === 'active').length;
+    renderActiveGuests();
+    const count = members.filter(m => m.status === 'active' && m.type !== 'convidado').length;
     const el = document.getElementById('stat-members');
     if (el) el.textContent = count;
   }
@@ -183,6 +199,80 @@ const MEMBERS = (() => {
       }
 
       // Clique no card abre perfil
+      card.addEventListener('click', () => openProfile(m));
+      grid.appendChild(card);
+    });
+  }
+
+  /* ---- CONVIDADOS ATIVOS ---- */
+  function renderActiveGuests() {
+    const grid = document.getElementById('guests-grid');
+    if (!grid) return;
+
+    const guests = members.filter(m => m.status === 'active' && m.type === 'convidado');
+    grid.innerHTML = '';
+
+    if (guests.length === 0) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Nenhum convidado cadastrado ainda.</div>';
+      return;
+    }
+
+    guests.forEach(m => {
+      const parts    = m.name.trim().split(' ');
+      const initials = (parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].substring(0, 2)).toUpperCase();
+
+      const card = document.createElement('div');
+      card.className = 'member-card guest-card';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'member-avatar';
+      avatar.style.borderColor = '#5a7a90';
+      if (m.photo_url) {
+        avatar.style.cssText = 'padding:0;overflow:hidden;border-color:#5a7a90;';
+        avatar.innerHTML = `<img src="${m.photo_url}" style="width:100%;height:100%;object-fit:cover;" />`;
+      } else {
+        avatar.textContent = initials;
+        avatar.style.color = '#8ab0c0';
+      }
+      card.appendChild(avatar);
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = m.name;
+      card.appendChild(name);
+
+      const role = document.createElement('div');
+      role.className = 'role';
+      role.textContent = m.role;
+      card.appendChild(role);
+
+      // Badge de equipe se tiver
+      if (m.team) {
+        const team = document.createElement('div');
+        team.style.cssText = 'font-size:10px;letter-spacing:1px;color:#5a7a90;text-transform:uppercase;margin-top:4px;';
+        team.textContent = '🏷 ' + m.team;
+        card.appendChild(team);
+      }
+
+      // Badge convidado
+      const badge = document.createElement('div');
+      badge.className = 'badge-guest';
+      badge.textContent = 'CONVIDADO';
+      card.appendChild(badge);
+
+      if (AUTH.isAdmin()) {
+        const adminDiv = document.createElement('div');
+        adminDiv.className = 'member-admin-btns';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-member-remove';
+        removeBtn.textContent = '✕';
+        removeBtn.addEventListener('click', e => { e.stopPropagation(); removeMember(m.id); });
+
+        adminDiv.appendChild(removeBtn);
+        card.appendChild(adminDiv);
+      }
+
       card.addEventListener('click', () => openProfile(m));
       grid.appendChild(card);
     });
@@ -397,6 +487,40 @@ const MEMBERS = (() => {
       _renderAll();
       showToast((m ? m.name : 'Membro') + ' removido.');
     } catch(e) { alert('Erro ao remover.'); }
+  }
+
+  /* ---- CADASTRO CONVIDADO ---- */
+  function openJoinGuestForm() {
+    document.querySelectorAll('.class-btn-guest').forEach((b, i) => b.classList.toggle('active', i === 0));
+    const hidden = document.getElementById('guest-role-hidden');
+    if (hidden) hidden.value = 'Assault';
+    const nameInput = document.getElementById('guest-name');
+    if (nameInput) nameInput.value = '';
+    const teamInput = document.getElementById('guest-team');
+    if (teamInput) teamInput.value = '';
+    document.getElementById('modal-join-guest').classList.add('open');
+    if (nameInput) nameInput.focus();
+  }
+
+  async function submitJoinGuest() {
+    const nameInput = document.getElementById('guest-name');
+    const teamInput = document.getElementById('guest-team');
+    const hiddenRole = document.getElementById('guest-role-hidden');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const team = teamInput ? teamInput.value.trim() : '';
+    const role = hiddenRole ? hiddenRole.value : 'Assault';
+
+    if (!name) { alert('Preencha seu nome completo.'); return; }
+
+    try {
+      const result = await DB.post('members', { name, role, team, status: 'pending', type: 'convidado' });
+      if (result && result[0]) members.push(result[0]);
+      closeModal('modal-join-guest');
+      if (nameInput) nameInput.value = '';
+      if (teamInput) teamInput.value = '';
+      showToast('Solicitação enviada! Aguarde aprovação. 🪖');
+    } catch(e) { alert('Erro ao enviar: ' + e.message); console.error(e); }
   }
 
   function closeModal(id) {
