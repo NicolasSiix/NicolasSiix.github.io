@@ -1949,3 +1949,8 @@ main {
   .member-card .name { font-size: 14px; }
   .member-card .role { font-size: 11px; }
 }
+
+/* ---- EQUIPE — nome maior 24px ---- */
+.member-card .name { font-size: 24px !important; }
+.member-card .role { font-size: 15px !important; letter-spacing: 2px; }
+.member-avatar { width: 68px !important; height: 68px !important; font-size: 26px !important; }
