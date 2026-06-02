@@ -53,7 +53,7 @@ const FEEDBACK = (() => {
       console.log('[FEEDBACK] hoje:', todayStr);
       // Usa array global games já carregado
       if (games && games.length > 0) {
-        finishedGames = games.filter(g => g.date < todayStr);
+        finishedGames = games.filter(g => g.date < todayStr).sort((a,b) => b.date.localeCompare(a.date));
       } else {
         const all = await DB.get('games', 'order=date.desc');
         finishedGames = all.filter(g => g.date < todayStr);
