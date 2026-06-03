@@ -264,11 +264,17 @@ const MEMBERS = (() => {
         const adminDiv = document.createElement('div');
         adminDiv.className = 'member-admin-btns';
 
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-member-edit';
+        editBtn.textContent = '✎';
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openEditMember(m.id); });
+
         const removeBtn = document.createElement('button');
         removeBtn.className = 'btn-member-remove';
         removeBtn.textContent = '✕';
         removeBtn.addEventListener('click', e => { e.stopPropagation(); removeMember(m.id); });
 
+        adminDiv.appendChild(editBtn);
         adminDiv.appendChild(removeBtn);
         card.appendChild(adminDiv);
       }
