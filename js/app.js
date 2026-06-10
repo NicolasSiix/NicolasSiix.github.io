@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   MEMBERS.init();
   PHOTOS.init();
   ABOUT.init();
-  FEEDBACK.init();
 
   // Carrega dados do banco
   try { games   = await DB.get('games',   'order=date.asc');       } catch(e) { console.error('[APP] games:', e); }
@@ -39,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (page === 'calendar') CALENDAR.render();
       if (page === 'photos')   await PHOTOS.render();
       if (page === 'about')    await ABOUT.render();
-      if (page === 'feedback') await FEEDBACK.render();
     });
   });
 
