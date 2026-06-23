@@ -3,8 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agulhas Negras – Squad Itu</title>
+  <title>Agulhas Negras — Time de Airsoft em Itu/SP</title>
+  <meta name="description" content="Agulhas Negras — Squad Itu. Time de airsoft tático de Itu/SP desde 2024. Confira o calendário de missões, a equipe, as fotos das operações e entre para o time." />
+  <meta name="theme-color" content="#d4af55" />
+  <meta name="author" content="Agulhas Negras — Squad Itu" />
+  <link rel="canonical" href="https://agulhasnegrasitu.com.br/" />
+
+  <!-- Open Graph (compartilhamento em WhatsApp / Instagram / Facebook) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Agulhas Negras — Squad Itu" />
+  <meta property="og:title" content="Agulhas Negras — Time de Airsoft em Itu/SP" />
+  <meta property="og:description" content="Time de airsoft tático de Itu/SP desde 2024. Calendário de missões, equipe, galeria e inscrições." />
+  <meta property="og:url" content="https://agulhasnegrasitu.com.br/" />
+  <meta property="og:image" content="https://agulhasnegrasitu.com.br/assets/logo.png" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Agulhas Negras — Time de Airsoft em Itu/SP" />
+  <meta name="twitter:description" content="Time de airsoft tático de Itu/SP desde 2024. Calendário de missões, equipe e galeria." />
+  <meta name="twitter:image" content="https://agulhasnegrasitu.com.br/assets/logo.png" />
+
   <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
@@ -43,6 +64,30 @@
 
     <!-- CALENDÁRIO -->
     <div class="page active" id="page-calendar">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <span class="hero-eyebrow">&#9632; Squad Itu &nbsp;&middot;&nbsp; Airsoft Tático &nbsp;&middot;&nbsp; Est. 2024</span>
+          <h2 class="hero-title">Agulhas <span>Negras</span></h2>
+          <p class="hero-sub">Disciplina, estratégia e adrenalina no campo. Confira as próximas operações e venha jogar com a gente.</p>
+          <div class="hero-actions">
+            <button class="btn-gold" onclick="document.querySelector('[data-page=&quot;games&quot;]').click()">&#127919; Próximas Missões</button>
+            <button class="btn-outline hero-btn-outline" onclick="document.querySelector('[data-page=&quot;members&quot;]').click()">&#128100; Entrar no Time</button>
+          </div>
+        </div>
+
+        <!-- BOX DE FOTOS ROTATIVAS (preenchido por js/hero.js) -->
+        <div class="hero-photos" id="hero-photos" aria-hidden="true" style="display:none;">
+          <div class="hero-photos-frame">
+            <img class="hero-photo-layer is-active" id="hero-photo-a" alt="" />
+            <img class="hero-photo-layer" id="hero-photo-b" alt="" />
+            <span class="hero-photos-tag">&#128247; A GALERA EM AÇÃO</span>
+          </div>
+        </div>
+      </section>
+
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-num" id="stat-games">0</div><div class="stat-label">Missões</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-members">0</div><div class="stat-label">Integrantes</div></div>
@@ -133,6 +178,23 @@
     </div>
 
   </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Agulhas Negras" class="footer-logo" />
+        <div>
+          <div class="footer-name">AGULHAS NEGRAS</div>
+          <div class="footer-tag">Squad Itu &middot; Airsoft Team &middot; Est. 2024</div>
+        </div>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/airsoftagulhasnegrasitu/" target="_blank" rel="noopener" class="footer-link">&#128247; @airsoftagulhasnegrasitu</a>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Agulhas Negras — Squad Itu. Todos os direitos reservados.</div>
+  </footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -365,6 +427,7 @@
 <script src="js/members.js"></script>
 <script src="js/photos.js"></script>
 <script src="js/about.js"></script>
+<script src="js/hero.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
