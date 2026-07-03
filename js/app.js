@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   MEMBERS.init();
   PHOTOS.init();
   ABOUT.init();
+  EVENT.init();
 
   // Carrega dados do banco
   try { games   = await DB.get('games',   'order=date.asc');       } catch(e) { console.error('[APP] games:', e); }
@@ -20,6 +21,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   GAMES.updateStats();
   CALENDAR.render();
   MEMBERS.renderFromMemory();
+
+  // Evento em destaque (banner na home + aba)
+  await EVENT.load();
+  EVENT.renderBanner();
 
   // Pré-carrega conteúdo de O Time em background
   ABOUT.render();
@@ -35,9 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (page === 'games')    await GAMES.renderList();
       if (page === 'members')  await MEMBERS.render();
-      if (page === 'calendar') CALENDAR.render();
+      if (page === 'calendar') { CALENDAR.render(); EVENT.renderBanner(); }
       if (page === 'photos')   await PHOTOS.render();
       if (page === 'about')    await ABOUT.render();
+      if (page === 'event')    EVENT.renderPage();
     });
   });
 

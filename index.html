@@ -53,6 +53,7 @@
   <nav>
     <div class="nav-inner">
       <button class="nav-btn active" data-page="calendar">&#128197; Calendário</button>
+      <button class="nav-btn nav-btn-event" data-page="event">&#127942; Evento</button>
       <button class="nav-btn"        data-page="games">&#127918; Missões</button>
       <button class="nav-btn"        data-page="members">&#128100; Equipe</button>
       <button class="nav-btn"        data-page="photos">&#128247; Fotos</button>
@@ -64,6 +65,9 @@
 
     <!-- CALENDÁRIO -->
     <div class="page active" id="page-calendar">
+
+      <!-- BANNER DE EVENTO EM DESTAQUE (preenchido por js/event.js) -->
+      <div id="event-banner" class="event-banner" style="display:none;"></div>
 
       <!-- HERO -->
       <section class="hero">
@@ -105,6 +109,15 @@
         <button class="month-btn" id="btn-next-month">&#8594;</button>
       </div>
       <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <!-- EVENTO (página dedicada) -->
+    <div class="page" id="page-event">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <div class="section-title" style="margin-bottom:0;">Evento em Destaque</div>
+        <button class="btn-gold admin-only" id="btn-edit-event" style="display:none;">&#9998; Editar Evento</button>
+      </div>
+      <div id="event-page-content"></div>
     </div>
 
     <!-- MISSÕES -->
@@ -406,6 +419,44 @@
   </div>
 </div>
 
+<!-- MODAL: EDITAR EVENTO -->
+<div class="modal-overlay" id="modal-edit-event">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-edit-event">&#215;</button>
+    <h2>Editar Evento em Destaque</h2>
+    <div class="modal-sub">Preencha os dados do evento. Ative para exibir no site.</div>
+
+    <label class="event-toggle">
+      <input type="checkbox" id="ev-active" />
+      <span>Exibir este evento no site (banner + aba Evento)</span>
+    </label>
+
+    <div class="form-group"><label>Título do Evento</label><input type="text" id="ev-title" placeholder="Ex: Operação Fênix — Open Day" /></div>
+    <div class="form-group"><label>Subtítulo (opcional)</label><input type="text" id="ev-subtitle" placeholder="Ex: Evento aberto a convidados" /></div>
+    <div class="form-row">
+      <div class="form-group"><label>Data</label><input type="date" id="ev-date" /></div>
+      <div class="form-group"><label>Horário</label><input type="time" id="ev-time" value="08:00" /></div>
+    </div>
+    <div class="form-group"><label>Local / Campo</label><input type="text" id="ev-local" placeholder="Ex: Arena Delta, Itu-SP" /></div>
+    <div class="form-group"><label>Descrição / Detalhes</label><textarea id="ev-desc" placeholder="Informações do evento, o que levar, modalidades..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Texto do Botão</label><input type="text" id="ev-cta-label" placeholder="Ex: Quero participar" /></div>
+      <div class="form-group"><label>Link do Botão (inscrição/formulário)</label><input type="text" id="ev-cta-link" placeholder="https://..." /></div>
+    </div>
+    <div class="form-group"><label>Link do Grupo de WhatsApp (opcional)</label><input type="text" id="ev-whatsapp" placeholder="https://chat.whatsapp.com/..." /></div>
+    <div class="form-group">
+      <label>Flyer / Imagem do Evento (opcional)</label>
+      <input type="file" id="ev-image-file" accept="image/*" style="color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px;width:100%;" />
+      <input type="hidden" id="ev-image-url" value="" />
+      <div id="ev-image-preview" style="margin-top:8px;"></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-outline" id="btn-cancel-edit-event">Cancelar</button>
+      <button class="btn-gold"    id="btn-save-event">Salvar Evento</button>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN ADMIN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
@@ -427,6 +478,7 @@
 <script src="js/members.js"></script>
 <script src="js/photos.js"></script>
 <script src="js/about.js"></script>
+<script src="js/event.js"></script>
 <script src="js/hero.js"></script>
 <script src="js/app.js"></script>
 </body>

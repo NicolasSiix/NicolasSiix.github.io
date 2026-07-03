@@ -56,6 +56,7 @@ const AUTH = (() => {
       updateAdminUI();
       if (typeof MEMBERS !== 'undefined') MEMBERS.render();
       if (typeof ABOUT   !== 'undefined') ABOUT.render();
+      if (typeof EVENT   !== 'undefined') EVENT.refresh();
       if (typeof PHOTOS  !== 'undefined') {
         const photosPage = document.getElementById('page-photos');
         if (photosPage && photosPage.classList.contains('active')) PHOTOS.render();
@@ -73,6 +74,7 @@ const AUTH = (() => {
     updateAdminUI();
     if (typeof MEMBERS !== 'undefined') MEMBERS.render();
     if (typeof ABOUT   !== 'undefined') ABOUT.render();
+    if (typeof EVENT   !== 'undefined') EVENT.refresh();
   }
 
   function updateAdminUI() {
