@@ -65,6 +65,7 @@ const EVENT = (() => {
     el.innerHTML = `
       <div class="event-banner-flag">🏆 Próximo Evento</div>
       <div class="event-banner-main">
+        ${data.image ? `<img class="event-banner-thumb" src="${esc(data.image)}" alt="" />` : ''}
         ${dp ? `<div class="event-banner-date"><span class="d">${dp.day}</span><span class="m">${dp.month}</span></div>` : ''}
         <div class="event-banner-info">
           <h3>${esc(data.title) || 'Evento'}</h3>

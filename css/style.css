@@ -2571,6 +2571,15 @@ nav {
   box-shadow: 0 4px 12px -4px rgba(212,175,85,0.6);
 }
 .event-banner-main { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+.event-banner-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(212,175,85,0.35);
+  box-shadow: 0 4px 12px -4px rgba(0,0,0,0.6);
+}
 .event-banner-date {
   flex-shrink: 0;
   text-align: center;
@@ -2634,9 +2643,10 @@ nav {
 .event-flyer img {
   width: 100%;
   height: auto;
-  max-height: 620px;          /* mostra o flyer inteiro, sem cortar */
+  max-height: 400px;          /* mostra o flyer inteiro, sem cortar */
   object-fit: contain;
   display: block;
+  padding: 16px;
 }
 .event-body { padding: 28px; }
 .event-flag {
