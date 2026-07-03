@@ -2624,8 +2624,20 @@ nav {
   padding: 8px 16px;
   border-bottom: 1px solid rgba(212,175,85,0.3);
 }
-.event-flyer { width: 100%; max-height: 460px; overflow: hidden; background: var(--olive-dark); }
-.event-flyer img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.event-flyer {
+  width: 100%;
+  background: #0b0d07;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.event-flyer img {
+  width: 100%;
+  height: auto;
+  max-height: 620px;          /* mostra o flyer inteiro, sem cortar */
+  object-fit: contain;
+  display: block;
+}
 .event-body { padding: 28px; }
 .event-flag {
   display: inline-block;
@@ -2660,6 +2672,8 @@ nav {
 }
 .event-fact .lbl { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
 .event-fact .val { display: block; font-size: 15px; color: var(--text); font-weight: 600; }
+.event-map-link { color: var(--gold); text-decoration: none; }
+.event-map-link:hover { text-decoration: underline; }
 .event-desc { margin-bottom: 24px; }
 .event-desc p { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 10px; }
 .event-desc p:last-child { margin-bottom: 0; }

@@ -15,6 +15,7 @@ const EVENT = (() => {
 
   function safeOn(id, ev, fn) { const el = document.getElementById(id); if (el) el.addEventListener(ev, fn); }
   function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function isUrl(s) { return /^https?:\/\//i.test((s || '').trim()); }
 
   function dateParts(dstr) {
     if (!dstr) return null;
@@ -68,7 +69,7 @@ const EVENT = (() => {
         <div class="event-banner-info">
           <h3>${esc(data.title) || 'Evento'}</h3>
           <div class="event-banner-meta">
-            ${data.local ? `<span>📍 ${esc(data.local)}</span>` : ''}
+            ${data.local ? `<span>📍 ${isUrl(data.local) ? 'Ver no mapa' : esc(data.local)}</span>` : ''}
             ${data.time ? `<span>⏰ ${esc(data.time)}</span>` : ''}
           </div>
         </div>
@@ -112,7 +113,7 @@ const EVENT = (() => {
           <div class="event-facts">
             ${dp ? `<div class="event-fact"><span class="lbl">Data</span><span class="val">${dp.longo}</span></div>` : ''}
             ${data.time ? `<div class="event-fact"><span class="lbl">Horário</span><span class="val">${esc(data.time)}</span></div>` : ''}
-            ${data.local ? `<div class="event-fact"><span class="lbl">Local</span><span class="val">${esc(data.local)}</span></div>` : ''}
+            ${data.local ? `<div class="event-fact"><span class="lbl">Local</span><span class="val">${isUrl(data.local) ? `<a href="${esc(data.local)}" target="_blank" rel="noopener" class="event-map-link">📍 Ver localização no mapa</a>` : esc(data.local)}</span></div>` : ''}
           </div>
           ${descHtml ? `<div class="event-desc">${descHtml}</div>` : ''}
           <div class="event-actions">
